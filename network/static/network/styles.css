@@ -1,0 +1,21 @@
+#newpost-view {
+    border: 2px solid black;
+    margin: 20px;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#newpost-form {
+    display: grid;
+    grid-template-rows: 3fr 1fr;
+}
+
+#newpost-form-text {
+    grid-column: 1/2;
+    text-align: left;
+    margin: 5px 0;
+}
+
+#newpost-form-post {
+    width: max-content;
+}
