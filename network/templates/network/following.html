@@ -1,0 +1,20 @@
+{% extends 'network/layout.html' %}
+
+{% block title %}
+    Following
+{% endblock %}
+
+{% block body %}
+    <h1>Following</h1>
+    {% if page_obj %}
+        {% include 'network/postList.html' %}
+    {% else %}
+        <div class="error-msg">
+            <i class="material-icons">error_outline</i>
+            <div class="error-msg-btm">
+                <h4>You have no follows</h4>
+                <a href="{% url 'index' %}">Follow someone now!</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

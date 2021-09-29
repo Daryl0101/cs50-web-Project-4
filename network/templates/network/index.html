@@ -1,17 +1,16 @@
 {% extends "network/layout.html" %}
-{% load static %}
 
 {% block body %}
-    <div id="newpost-view">
-        <h2>New Post</h2>
-        <form id="newpost-form">
-            {% csrf_token %}
-            <textarea name="" class="input-group-text" id="newpost-form-text" rows="3" required></textarea>
-            <input type="submit" class="btn btn-primary" id="newpost-form-post" value="Post">
-        </form>
-    </div>
-{% endblock %}
-
-{% block script %}
-    <script src="{% static 'network/index.js' %}"></script>
+    {% if user.is_authenticated %}
+        <div id="newpost-view">
+            <h2>New Post</h2>
+            <form id="newpost-form">
+                {% csrf_token %}
+                <textarea name="" class="input-group-text" id="newpost-form-text" rows="3" required></textarea>
+                <input type="submit" class="btn btn-primary" id="newpost-form-post" value="Post">
+            </form>
+        </div>
+    {% endif %}
+    
+    {% include 'network/postList.html' %}
 {% endblock %}
