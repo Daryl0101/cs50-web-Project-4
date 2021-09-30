@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* document.querySelectorAll('li.prev').forEach(item => item.style.display = 'none');
     document.querySelectorAll('li.nxt').forEach(item => item.style.display = 'none'); */
     
+    // Post form
     if(document.querySelector('#newpost-form-post')) {
         document.querySelector('#newpost-form-post').onclick = function() {
             post();
@@ -13,20 +14,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Follow and unfollow button
     if(document.querySelector('.follow-button')) {
-        profile_user = document.querySelector('.follow-button').dataset.info;
-        document.querySelector('.follow-button').addEventListener('click', function(){
-            update_follow('follow', profile_user);
-            window.location.reload();
+        document.querySelectorAll('.follow-button').forEach(button => {
+            button.onclick = function() {
+                update_follow(this);
+            }
         });
     }
-    else if(document.querySelector('.unfollow-button')) {
-        profile_user = document.querySelector('.unfollow-button').dataset.info;
-        document.querySelector('.unfollow-button').addEventListener('click', function(){
-            update_follow('unfollow', profile_user);
-            window.location.reload();
+
+    // Like and unlike button
+    if(document.querySelector('.post-likes')) {
+        document.querySelectorAll('.post-likes').forEach(button => {
+            button.onclick = function() {
+                update_like(this);
+            }
         });
     }
+    
     /* load_view('all', 1); */
 });
 
@@ -51,24 +56,39 @@ function post() {
     document.querySelector('#newpost-form-text').value = "";
 }
 
-function update_follow(type, profile_user) {
+function update_follow(button) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    if(type=='follow'){
-        follow_status = true;
-    }
-    else {
-        follow_status = false;
-    }
-    fetch(`/updatefollow`, {
+    fetch(`/update`, {
         method: 'PUT',
         headers: {'X-CSRFToken': csrftoken},
         body: JSON.stringify({
-            toFollow: follow_status,
-            profile_user: profile_user
+            profile_user: button.dataset.info
         })
     })
     .then(response => response.json())
-    .then(result => console.log(result));
+    .then(result => {
+        console.log(result);
+        button.innerText = result.btn_content;
+        button.className = result.btn_class;
+        document.querySelector('.followers').innerText = result.profile_followers;
+    });
+}
+
+function update_like(button) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/update`, {
+        method: 'PUT',
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+            current_post: button.querySelector('.like-button').dataset.info
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        button.querySelector('.like-button').innerText = result.icon_html;
+        button.querySelector('.post-likes-num').innerText = result.like_num;
+    });
 }
 
 /* function load_view(view, page) {
@@ -80,7 +100,7 @@ function update_follow(type, profile_user) {
         load_pagebar(page_in);
     })
     .catch(error => console.error(`Unable to fetch items for ${view}: Page ${page}`, error));
-} */
+}
 
 /* function load_pagebar(page_fetched){
     // Hide all previous and next buttons

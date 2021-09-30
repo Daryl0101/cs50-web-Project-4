@@ -13,6 +13,6 @@ urlpatterns = [
 
     #API paths
     path("network", views.post, name="post"),
-    path("updatefollow", views.updatefollow, name="updatefollow")
+    path("update", views.update, name="update")
 ]
 """ path("network/<str:post_type>/<int:page_num>", views.page, name="page"), """

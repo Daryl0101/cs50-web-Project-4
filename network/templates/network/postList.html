@@ -10,8 +10,16 @@
                     {% endif %}
                     <br>
                     <div class="post-likes">
-                        <span class="material-icons" style="color: red;">favorite_border</span>&nbsp;
-                        <span class="post-likes-num">{{ post.likes.count }}</span>
+                        {% csrf_token %}
+                        <span class="material-icons like-button" style="color: red;" data-info="{{ post.id }}">
+                        {% if post in user.like.all %}
+                            favorite
+                        {% else %}
+                            favorite_border
+                        {% endif %}
+                        </span>&nbsp;
+                        
+                        <span class="post-likes-num" id="{{ post.id }}">{{ post.likes.count }}</span>
                     </div>
                     <p class="post-timestamp blockquote-footer">{{ post.timestamp| date:"F j, Y, P" }}</p>
                 </div>

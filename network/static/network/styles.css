@@ -31,10 +31,9 @@
     margin: 10px 0;
 }
 
-.post-likes.material-icons:hover {
+.post-likes:hover {
     cursor: pointer;
 }
-
 .post-timestamp {
     margin: 0;
 }
@@ -92,6 +91,10 @@
 .error-msg i {
     color: red;
     font-size: 30vw;
+}
+
+.error-msg i:hover {
+    cursor: context-menu;
 }
 
 .error-msg-btm {

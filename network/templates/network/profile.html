@@ -12,9 +12,9 @@
             <h1 class="profile-name">{{ profile_user }}'s Profile</h1>
             {% csrf_token %}
             {% if profile_user not in user.following.all %}
-                <button class="btn btn-outline-success follow-button" data-info="{{ profile_user.username }}">Follow</button>
+                <button class="btn btn-outline-success follow-button" data-info="{{ profile_user.id }}">Follow</button>
             {% else %}
-                <button class="btn btn-outline-danger unfollow-button" data-info="{{ profile_user.username }}">Unfollow</button>
+                <button class="btn btn-outline-danger follow-button" data-info="{{ profile_user.id }}">Unfollow</button>
             {% endif %}
         {% endif %}
         <div class="profile-top-container">
@@ -22,7 +22,7 @@
                 <div class="card-body profile-info-container">
                     <h5 class="card-header profile-info-title">Followers</h5>
                     <div class="profile-count-container">
-                        <h1 class="card-text profile-info-count">{{ profile_user.followers.all.count }}</h1>
+                        <h1 class="card-text profile-info-count followers">{{ profile_user.followers.all.count }}</h1>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                 <div class="card-body profile-info-container">
                     <h5 class="card-header profile-info-title">Following</h5>
                     <div class="profile-count-container">
-                        <h1 class="card-text profile-info-count">{{ profile_user.following.count }}</h1>
+                        <h1 class="card-text profile-info-count following">{{ profile_user.following.count }}</h1>
                     </div>
                 </div>
             </div>

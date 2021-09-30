@@ -119,16 +119,39 @@ def post(request):
     return JsonResponse({"message": "Post successful."}, status=201)
 
 @login_required(login_url='login')
-def updatefollow(request):
+def update(request):
     if request.method == 'PUT':
         data = json.loads(request.body)
-        profile_user = User.objects.get(username = data.get('profile_user'))
-        profile_user = profile_user.id
-        if data.get('toFollow')==False:
-            request.user.following.remove(profile_user)
+
+        # Update follow or unfollow
+        if data.get('profile_user') is not None:
+            profile_user = User.objects.get(pk = data.get('profile_user'))
+            if request.user is not profile_user:
+                if profile_user in request.user.following.all():
+                    request.user.following.remove(data.get('profile_user'))
+                    btn_content = 'Follow'
+                    btn_class = 'btn btn-outline-success'
+                else:
+                    request.user.following.add(data.get('profile_user'))
+                    btn_content = 'Unfollow'
+                    btn_class = 'btn btn-outline-danger'
+                return JsonResponse({"message": "Update following successful.", "btn_content": btn_content, "btn_class": btn_class, "profile_followers": profile_user.followers.count()}, status=201)
+            else:
+                return JsonResponse({"message": "Update failed, a user cannot follow himself/herself"}, status=400)
+        
+        # Update like or unlike
         else:
-            request.user.following.add(profile_user)
-        return JsonResponse({"message": "Update successful."}, status=201)
+            if request.user.like.filter(id = data.get('current_post')).exists():
+                request.user.like.remove(data.get('current_post'))
+                icon_html = 'favorite_border'
+            else:
+                request.user.like.add(data.get('current_post'))
+                icon_html = 'favorite'
+            return JsonResponse({"message": "Update likes successful.", "like_num": Post.objects.get(id = data.get('current_post')).likes.count(), 'icon_html': icon_html}, status=201)
+
+    else:
+        return JsonResponse({"error": "Update failed."}, status=400)
+        
 """ def page(request, post_type, page_num):
     
     # User request all posts
