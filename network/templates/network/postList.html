@@ -4,11 +4,16 @@
             <div class="card post-object">
                 <a class="card-header post-user" href="{% url 'profile' post.user %}"><strong>{{ post.user }}</strong></a>
                 <div class="card-body post-lower">
-                    <p class="post-content card-text">{{ post.content }}</p>
-                    {% if post.user == user %}
-                        <a class="post-edit-button" href="#">Edit</a>
-                    {% endif %}
-                    <br>
+                    <div class="post-edit-edited">
+                        <div class="post-content-edit-div">
+                            <p class="post-content card-text">{{ post.content }}</p>
+                            {% if post.user == user %}
+                                {% csrf_token %}
+                                <a class="post-edit-button" href="#" data-id="{{ post.id }}">Edit</a>
+                            {% endif %}
+                        </div>
+                        <div class="edit"></div>
+                    </div>
                     <div class="post-likes">
                         {% csrf_token %}
                         <span class="material-icons like-button" style="color: red;" data-info="{{ post.id }}">

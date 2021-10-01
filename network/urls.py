@@ -13,6 +13,8 @@ urlpatterns = [
 
     #API paths
     path("network", views.post, name="post"),
-    path("update", views.update, name="update")
+    path("update", views.update, name="update"),
+    path("edit", views.edit, name="edit"),
+    path("edit/<int:post_id>", views.getEditTextarea, name="getEditTextarea")
 ]
 """ path("network/<str:post_type>/<int:page_num>", views.page, name="page"), """

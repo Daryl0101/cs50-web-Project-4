@@ -5,7 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Following</h1>
+    <div class="following-title">
+        <h1>Following</h1>
+    </div>
     {% if page_obj %}
         {% include 'network/postList.html' %}
     {% else %}

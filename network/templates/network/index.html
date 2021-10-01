@@ -6,11 +6,20 @@
             <h2>New Post</h2>
             <form id="newpost-form">
                 {% csrf_token %}
-                <textarea name="" class="input-group-text" id="newpost-form-text" rows="3" required></textarea>
+                <textarea name="" class="form-control" id="newpost-form-text" rows="3" required></textarea>
                 <input type="submit" class="btn btn-primary" id="newpost-form-post" value="Post">
             </form>
         </div>
     {% endif %}
     
-    {% include 'network/postList.html' %}
+    {% if page_obj %}
+        {% include 'network/postList.html' %}
+    {% else %}
+        <div class="error-msg">
+            <i class="material-icons">error_outline</i>
+            <div class="error-msg-btm">
+                <h4>No posts</h4>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

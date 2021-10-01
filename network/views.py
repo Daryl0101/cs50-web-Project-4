@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 import json
 from django.core.paginator import Paginator
-
+from django.utils import timezone
 
 from .models import User, Post
 
@@ -130,11 +130,11 @@ def update(request):
                 if profile_user in request.user.following.all():
                     request.user.following.remove(data.get('profile_user'))
                     btn_content = 'Follow'
-                    btn_class = 'btn btn-outline-success'
+                    btn_class = 'btn btn-outline-success follow-button'
                 else:
                     request.user.following.add(data.get('profile_user'))
                     btn_content = 'Unfollow'
-                    btn_class = 'btn btn-outline-danger'
+                    btn_class = 'btn btn-outline-danger follow-button'
                 return JsonResponse({"message": "Update following successful.", "btn_content": btn_content, "btn_class": btn_class, "profile_followers": profile_user.followers.count()}, status=201)
             else:
                 return JsonResponse({"message": "Update failed, a user cannot follow himself/herself"}, status=400)
@@ -150,8 +150,42 @@ def update(request):
             return JsonResponse({"message": "Update likes successful.", "like_num": Post.objects.get(id = data.get('current_post')).likes.count(), 'icon_html': icon_html}, status=201)
 
     else:
-        return JsonResponse({"error": "Update failed."}, status=400)
-        
+        return JsonResponse({"error": f"{request.method} method is invalid"}, status=400)
+
+@login_required(login_url='login')
+def edit(request):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        if Post.objects.filter(id = post_id).exists():
+            edit_post = Post.objects.get(id = post_id)
+            if len(data.get('content')):
+                if request.user.id == edit_post.user.id:
+                    Post.objects.filter(id = post_id).update(content=data.get('content'), timestamp=timezone.now())
+                    return JsonResponse({"message": "Update successful", "content": Post.objects.get(id = post_id).content, "post_id": post_id}, status=201)
+                else:
+                    return JsonResponse({"message": "Update Failed, cannot edit other user's post"}, status=400)
+            else:
+                return JsonResponse({"message": "Update Failed, post cannot be empty"}, status=400)
+        else:
+            return JsonResponse({"message": "No such post"}, status=400)
+            
+    else:
+        return JsonResponse({"message": f"PUT method only, you are using method: {request.method}"}, status=400)
+
+@login_required(login_url='login')
+def getEditTextarea(request, post_id):
+    if request.method == 'GET':
+        if Post.objects.filter(id = post_id).exists():
+            edit_post = Post.objects.get(id = post_id)
+            if request.user.id == edit_post.user.id:
+                return JsonResponse({"message": "Get successful", "content": edit_post.content, "post_id": post_id}, status=201)
+            else:
+                return JsonResponse({"message": "Get Failed, cannot edit other user's post"}, status=400)
+        else:
+            return JsonResponse({"message": "No such post"}, status=400)
+    else:
+        return JsonResponse({"message": f"GET method only, you are using method: {request.method}"}, status=400)
 """ def page(request, post_type, page_num):
     
     # User request all posts

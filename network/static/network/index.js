@@ -3,9 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#following').addEventListener('click', () => load_view('following', 1));
     document.querySelector('#profile').addEventListener('click', () => load_view('profile', 1));
     
-    /* document.querySelectorAll('li.prev').forEach(item => item.style.display = 'none');
-    document.querySelectorAll('li.nxt').forEach(item => item.style.display = 'none'); */
-    
     // Post form
     if(document.querySelector('#newpost-form-post')) {
         document.querySelector('#newpost-form-post').onclick = function() {
@@ -31,8 +28,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Edit button
+    if(document.querySelector('.post-edit-button')){
+        document.querySelectorAll('.post-edit-button').forEach(button => {
+            button.onclick = function() {
+                show_edit_textarea(this.parentNode.parentNode);
+                this.parentNode.style.display = 'none';
+                return false;
+            }
+        });
+    }
+
     
-    /* load_view('all', 1); */
+    // Once the page renders, if there are edit buttons on the page, find the buttons
+    // Function of the buttons:
+    // onclick, hide the button (post-edit-button) and the content (post-content)
+    // show (for-edit)
+    // pre-fill (post-edit-textarea) with value of (post-content) or fetch the data to show
+    // Set function of post button (post-edit-submit): once clicked, fetch 'PUT' and hid (for-edit)
 });
 
 function post() {
@@ -58,7 +72,7 @@ function post() {
 
 function update_follow(button) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    fetch(`/update`, {
+    fetch('/update', {
         method: 'PUT',
         headers: {'X-CSRFToken': csrftoken},
         body: JSON.stringify({
@@ -76,7 +90,7 @@ function update_follow(button) {
 
 function update_like(button) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    fetch(`/update`, {
+    fetch('/update', {
         method: 'PUT',
         headers: {'X-CSRFToken': csrftoken},
         body: JSON.stringify({
@@ -91,44 +105,44 @@ function update_like(button) {
     });
 }
 
-/* function load_view(view, page) {
-    
-    fetch(`/network/${view}/${page}`)
+function show_edit_textarea(div){
+    fetch(`/edit/${div.querySelector('.post-edit-button').dataset.id}`)
     .then(response => response.json())
-    .then(page_in => {
-        console.log(page_in);
-        load_pagebar(page_in);
-    })
-    .catch(error => console.error(`Unable to fetch items for ${view}: Page ${page}`, error));
+    .then(result => {
+        console.log(result);
+        const element = document.createElement('div');
+        element.className = 'for-edit';
+        element.innerHTML = `<textarea class="post-edit-textarea form-control" rows="3">${result.content}</textarea><br>
+        <button class="post-edit-submit btn btn-primary" data-id="${result.post_id}">Post</button>`;
+        div.querySelector('.edit').append(element);
+        // Post button after edit
+        document.querySelector('.post-edit-submit').onclick = function() {
+            edit(this.parentNode.parentNode.parentNode);
+            this.parentNode.remove();
+        }
+    });
 }
 
-/* function load_pagebar(page_fetched){
-    // Hide all previous and next buttons
-    document.querySelectorAll('li.prev').forEach(item => item.style.display = 'none');
-    document.querySelectorAll('li.nxt').forEach(item => item.style.display = 'none');
-    
-    console.log(`Previous page: ${page_fetched.post_type, page_fetched.previous_page_number}`);
-    console.log(`Next page: ${page_fetched.post_type, page_fetched.next_page_number}`);
-
-    if(page_fetched.has_previous == true){
-        document.querySelector('li.prev.enabled').style.display = 'block';
-        document.querySelector('li.prev.enabled').addEventListener('click', () => {
-            load_view(page_fetched.post_type, page_fetched.previous_page_number);
-            console.log('Previous button clicked');
-        });
-    }
-    else if(page_fetched.has_previous == false){
-        document.querySelector('li.prev.disabled').style.display = 'block';
-    }
-
-    if(page_fetched.has_next == true){
-        document.querySelector('li.nxt.enabled').style.display = 'block';
-        document.querySelector('li.nxt.enabled').addEventListener('click', () => {
-            load_view(page_fetched.post_type, page_fetched.next_page_number);
-            console.log('Next button clicked');
-        });
-    }
-    else if(page_fetched.has_next == false){
-        document.querySelector('li.nxt.disabled').style.display = 'block';
-    }
-} */
+function edit(div) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch('/edit', {
+        method: 'PUT',
+        headers: {'X-CSRFToken': csrftoken},
+        body: JSON.stringify({
+            content: div.querySelector('.post-edit-textarea').value,
+            post_id: div.querySelector('.post-edit-submit').dataset.id
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        if(result.content){
+            div.querySelector('.post-content-edit-div').style.display = 'block';
+            div.querySelector('.post-content').innerText = result.content;
+        }
+        else{
+            alert(result.message);
+            window.location.reload();
+        }
+    });
+}

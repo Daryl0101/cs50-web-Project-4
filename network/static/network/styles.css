@@ -11,9 +11,8 @@
 }
 
 #newpost-form-text {
-    grid-column: 1/2;
-    text-align: left;
     margin: 5px 0;
+    background-color: #eee;
 }
 
 #newpost-form-post {
@@ -111,4 +110,32 @@
 
 .error-msg-btm a {
     text-align: center;
+}
+
+.profile-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    margin: 0 50px;
+}
+
+.profile-name {
+    justify-self: flex-start;
+    align-self: center;
+}
+
+.follow-button {
+    justify-self: flex-end;
+    align-self: center;
+    width: 100px;
+    height: 40px;
+}
+
+.following-title {
+    display: grid;
+    margin: 0 50px;
+}
+
+.following-title h1{
+    justify-self: flex-start;
+    align-self: center;
 }
