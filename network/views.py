@@ -21,6 +21,7 @@ def index(request):
     page_obj = posts.get_page(page_num)
     return render(request, "network/index.html", {'page_obj': page_obj})
 
+# User profile page
 @login_required(login_url='login')
 def profile(request, profile_user):
     
@@ -34,6 +35,7 @@ def profile(request, profile_user):
         'profile_user': profile_user
     })
 
+# User following page
 @login_required(login_url='login')
 def follow(request):
     posts = []
@@ -48,6 +50,7 @@ def follow(request):
         'page_obj': page_obj,
     })
 
+# Get post timestamp
 def get_timestamp(post):
     return post.timestamp
 
@@ -103,6 +106,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+# Creates new post
 @login_required(login_url='login')
 def post(request):
 
@@ -118,6 +122,7 @@ def post(request):
     Post.objects.create(content=data.get("content"), user=request.user)
     return JsonResponse({"message": "Post successful."}, status=201)
 
+# Update user's following status and like status
 @login_required(login_url='login')
 def update(request):
     if request.method == 'PUT':
@@ -152,6 +157,7 @@ def update(request):
     else:
         return JsonResponse({"error": f"{request.method} method is invalid"}, status=400)
 
+# Edit post
 @login_required(login_url='login')
 def edit(request):
     if request.method == 'PUT':
@@ -173,6 +179,7 @@ def edit(request):
     else:
         return JsonResponse({"message": f"PUT method only, you are using method: {request.method}"}, status=400)
 
+# Get post info before editing
 @login_required(login_url='login')
 def getEditTextarea(request, post_id):
     if request.method == 'GET':
@@ -186,51 +193,3 @@ def getEditTextarea(request, post_id):
             return JsonResponse({"message": "No such post"}, status=400)
     else:
         return JsonResponse({"message": f"GET method only, you are using method: {request.method}"}, status=400)
-""" def page(request, post_type, page_num):
-    
-    # User request all posts
-    posts = []
-    if post_type == 'all':
-        all_post = Post.objects.all().order_by('-timestamp')
-        for obj in all_post:
-            posts.append(obj.serialize())
-    # User request personal posts
-    elif post_type == 'profile':
-        all_post = Post.objects.filter(user=request.user).order_by('-timestamp')
-        for obj in all_post:
-            posts.append(obj.serialize())
-    # User request posts by user's currently following users
-    elif post_type == 'following':
-        followings = request.user.following.all()
-        for follow in followings:
-            for post in follow.posts.all():
-                posts.append(post.serialize())
-                # May need to order by timestamp
-    
-    # Arrange the posts list into 10 posts per page
-    p = Paginator(posts, 10)
-    page_items = []
-    for obj in p.page(page_num).object_list:
-        page_items.append(obj)
-    context = {
-        'post_type' :post_type,
-        'total_items':p.count,
-        'all_posts': posts,
-        'num_pages':p.num_pages,
-        'page':page_num,
-        'page_items' :page_items,
-        'has_previous': p.page(page_num).has_previous(),
-        'has_next': p.page(page_num).has_next()
-    }
-
-    if p.page(page_num).has_previous()==False:
-        context['previous_page_number'] = ''
-    else:
-        context['previous_page_number'] = p.page(page_num).previous_page_number()
-
-    if p.page(page_num).has_next()==False:
-        context['next_page_number'] = ''
-    else:
-        context['next_page_number'] = p.page(page_num).next_page_number()
-
-    return JsonResponse(context, status=201) """

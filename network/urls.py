@@ -17,4 +17,3 @@ urlpatterns = [
     path("edit", views.edit, name="edit"),
     path("edit/<int:post_id>", views.getEditTextarea, name="getEditTextarea")
 ]
-""" path("network/<str:post_type>/<int:page_num>", views.page, name="page"), """

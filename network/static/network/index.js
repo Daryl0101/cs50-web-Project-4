@@ -39,14 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    
-    // Once the page renders, if there are edit buttons on the page, find the buttons
-    // Function of the buttons:
-    // onclick, hide the button (post-edit-button) and the content (post-content)
-    // show (for-edit)
-    // pre-fill (post-edit-textarea) with value of (post-content) or fetch the data to show
-    // Set function of post button (post-edit-submit): once clicked, fetch 'PUT' and hid (for-edit)
 });
 
 function post() {
