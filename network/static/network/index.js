@@ -105,7 +105,7 @@ function show_edit_textarea(div){
         const element = document.createElement('div');
         element.className = 'for-edit';
         element.innerHTML = `<textarea class="post-edit-textarea form-control" rows="3">${result.content}</textarea><br>
-        <button class="post-edit-submit btn btn-primary" data-id="${result.post_id}">Post</button>`;
+        <button class="post-edit-submit btn btn-primary" data-id="${result.post_id}">Save</button>`;
         div.querySelector('.edit').append(element);
         // Post button after edit
         document.querySelector('.post-edit-submit').onclick = function() {
